@@ -36,6 +36,8 @@ jobs:
         port: '22'
         script: |
           whoami
-          docker stop ${{ env.CONTAINER_NAME }} || true && docker rm ${{ env.CONTAINER_NAME }} || true
+          docker logout ghcr.io
+          docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}  ghcr.io/${{ github.actor }}/${{ github.event.repository.name }}
+          docker rm -f ${{ env.CONTAINER_NAME }} || true
           docker pull ${{ env.DOCKER_IMAGE_URL }}
           docker run --restart=always -d --name ${{ env.CONTAINER_NAME }} -p 9002:3000 ${{ env.DOCKER_IMAGE_URL }}
