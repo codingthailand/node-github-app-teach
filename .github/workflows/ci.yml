@@ -1,0 +1,40 @@
+name: 'deploy docker'
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+
+  release-docker-image-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: ${{ github.event.repository.name }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+  auto-deploy-docker-job:
+    needs: release-docker-image-job
+    runs-on: ubuntu-latest
+    env:
+      CONTAINER_NAME: 'akenarin-node-app'
+      DOCKER_IMAGE_URL: 'ghcr.io/${{ github.actor }}/${{ github.event.repository.name }}:${{  github.ref_name }}'
+    steps:
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: '159.223.41.181'
+        username: 'root'
+        password: '$Admin_1jj395qu'
+        port: '22'
+        script: |
+          whoami
+          docker stop ${{ env.CONTAINER_NAME }} || true && docker rm ${{ env.CONTAINER_NAME }} || true
+          docker pull ${{ env.DOCKER_IMAGE_URL }}
+          docker run --restart=always -d --name ${{ env.CONTAINER_NAME }} -p 9001:80 ${{ env.DOCKER_IMAGE_URL }}
