@@ -56,10 +56,10 @@ jobs:
       uses: fifsky/ssh-action@master
       with:
         command: |
-          cd /tmp
-          ls -a
+          whoami
           host: '159.223.41.181'
-          user: root
+          user: 'root'
+          pass: '$Admin_1jj395qu'
           key: ${{ secrets.MY_PRIVATE_KEY}}
         
 
