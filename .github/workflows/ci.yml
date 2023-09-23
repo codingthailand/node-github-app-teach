@@ -52,17 +52,14 @@ jobs:
       CONTAINER_NAME: 'akenarin-node-app'
       DOCKER_IMAGE_URL: 'ghcr.io/${{ github.actor }}/${{ github.event.repository.name }}:${{  github.ref_name }}'
     steps:
-    - name: Deploy to Staging server
-      uses: easingthemes/ssh-deploy@main
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@v1.0.0
       with:
-        SSH_PRIVATE_KEY: ${{ secrets.MY_PRIVATE_KEY }}
-        ARGS: "-rlgoDzvc -i"
-        REMOTE_HOST: '159.223.41.181'
-        REMOTE_USER: 'root'
-        SCRIPT_BEFORE: |
-            whoami
-            ls -al
-
+        host: '159.223.41.181'
+        username: 'root'
+        port: '22'
+        key: ${{ secrets.MY_PRIVATE_KEY }}
+        script: whoami
 
 
             
