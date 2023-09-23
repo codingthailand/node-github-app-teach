@@ -52,14 +52,16 @@ jobs:
       CONTAINER_NAME: 'akenarin-node-app'
       DOCKER_IMAGE_URL: 'ghcr.io/${{ github.actor }}/${{ github.event.repository.name }}:${{  github.ref_name }}'
     steps:
-    - name: executing remote ssh commands using ssh key
-      uses: appleboy/ssh-action@v1.0.0
+    - name: ls -a via ssh
+      uses: fifsky/ssh-action@master
       with:
-        host: '159.223.41.181'
-        username: 'root'
-        port: '22'
-        key: ${{ secrets.MY_PRIVATE_KEY }}
-        script: whoami
+        command: |
+          cd /tmp
+          ls -a
+          host: '159.223.41.181'
+          user: root
+          key: ${{ secrets.MY_PRIVATE_KEY}}
+        
 
 
             
